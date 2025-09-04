@@ -42,12 +42,15 @@ def get_response_with_nlp(user_input):
                 return random.choice(intent['responses'])
     
     # You can add more specific rules here for other diseases or keywords
-    
+    for intent in data['intents']:
+        if intent['tag'] == 'hair_fall' and any(word in user_input for word in intent['patterns']):
+            return random.choice(intent['responses'])
+
     # Simple fallback for greetings and goodbye
     for intent in data['intents']:
-        if intent['tag'] == 'greeting' and any(token.text in intent['patterns'] for token in doc):
+        if intent['tag'] == 'greeting' and any(word in user_input for word in intent['patterns']):
             return random.choice(intent['responses'])
-        if intent['tag'] == 'goodbye' and any(token.text in intent['patterns'] for token in doc):
+        if intent['tag'] == 'goodbye' and any(word in user_input for word in intent['patterns']):
             return random.choice(intent['responses'])
     
     # Fallback for general health queries
@@ -55,7 +58,7 @@ def get_response_with_nlp(user_input):
         return "I can provide general information on common diseases like Dengue and Malaria. Please ask a specific question."
     
     # Final fallback if nothing is recognized
-    return "I am sorry, I am not trained to answer that question. For medical emergencies, please contact a healthcare professional. "
+    return "I am sorry, I am not trained to answer that question. For medical emergencies, please contact a healthcare professional."
 
 # --- Streamlit UI Code ---
 st.set_page_config(page_title="Odisha Health Awareness Chatbot")
