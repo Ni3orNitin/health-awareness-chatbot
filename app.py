@@ -16,8 +16,8 @@ st.title("🩺 Odisha Health Awareness Chatbot")
 # MySQL database connection details
 DB_CONFIG = {
     "host": "localhost",
-    "user": "chatbot_user",  # <-- CHANGE THIS
-    "passwd": "your_password",  # <-- CHANGE THIS
+    "user": "chatbot_user",  # <-- USE THE USERNAME YOU CREATED
+    "passwd": "your_password",  # <-- USE THE PASSWORD YOU CREATED
     "database": "odisha_health_chatbot"
 }
 
@@ -55,10 +55,10 @@ intents = get_intents_from_db()
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# --- Chatbot response logic with corrected Wikipedia fallback ---
+# --- Chatbot response logic with corrected Wikipedia fallback and logging ---
 def get_response(user_input):
-    user_input = user_input.lower().strip()
-    doc = nlp(user_input)
+    user_input_lower = user_input.lower().strip()
+    doc = nlp(user_input_lower)
 
     best_match = None
     best_score = 0
@@ -67,11 +67,11 @@ def get_response(user_input):
     for intent in intents["intents"]:
         for pattern in intent["patterns"]:
             # Fuzzy string similarity
-            score = fuzz.ratio(user_input, pattern.lower())
+            score = fuzz.ratio(user_input_lower, pattern.lower())
 
             # Keyword overlap
             pattern_words = set(pattern.lower().split())
-            input_words = set(user_input.split())
+            input_words = set(user_input_lower.split())
             overlap = len(pattern_words & input_words)
             score += overlap * 10
 
@@ -86,11 +86,11 @@ def get_response(user_input):
 
     # Threshold for intent match
     if best_score > 70:
-        return chosen_response
+        response_text = chosen_response
     else:
         # Wikipedia API fallback
         try:
-            WIKI_API_URL = f"https://en.wikipedia.org/api/rest_v1/page/summary/{user_input.replace(' ', '_')}"
+            WIKI_API_URL = f"https://en.wikipedia.org/api/rest_v1/page/summary/{user_input_lower.replace(' ', '_')}"
             response = requests.get(WIKI_API_URL, timeout=5)
             if response.status_code == 200:
                 data = response.json()
@@ -98,13 +98,30 @@ def get_response(user_input):
                 
                 # Check for unhelpful Wikipedia pages
                 if 'may refer to' in extract or 'The following is a list of' in extract:
-                    return "❌ I’m sorry, I don’t have information about that. Please consult a healthcare professional."
-                
-                return f"🌐 Wikipedia info about **{user_input.title()}**:\n\n{extract}"
+                    response_text = "❌ I’m sorry, I don’t have information about that. Please consult a healthcare professional."
+                else:
+                    response_text = f"🌐 Wikipedia info about **{user_input.title()}**:\n\n{extract}"
             else:
-                return f"❌ Sorry, I don't have info about '{user_input}'. Please consult a healthcare professional."
+                response_text = f"❌ Sorry, I don't have info about '{user_input}'. Please consult a healthcare professional."
         except requests.exceptions.RequestException:
-            return f"❌ Sorry, I couldn't fetch info for '{user_input}'. Please consult a healthcare professional."
+            response_text = f"❌ Sorry, I couldn't fetch info for '{user_input}'. Please consult a healthcare professional."
+            
+    # Log the interaction to the database
+    try:
+        conn = mysql.connector.connect(**DB_CONFIG)
+        cursor = conn.cursor()
+        sql = "INSERT INTO conversation_logs (user_input, chatbot_response) VALUES (%s, %s)"
+        val = (user_input, response_text)
+        cursor.execute(sql, val)
+        conn.commit()
+    except mysql.connector.Error as err:
+        st.error(f"Error logging conversation: {err}")
+    finally:
+        if 'conn' in locals() and conn.is_connected():
+            cursor.close()
+            conn.close()
+
+    return response_text
 
 # --- Sidebar Quick Buttons ---
 st.sidebar.title("⚡ Quick Questions")
