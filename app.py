@@ -3,83 +3,71 @@ import json
 import random
 import spacy
 
-# --- Page Config ---
-st.set_page_config(page_title="Odisha Health Awareness Chatbot")
+# Load spaCy model
+nlp = spacy.load("en_core_web_sm")
 
-st.title("👨‍⚕️ Odisha Health Awareness Chatbot")
-st.markdown("Hi! I'm your virtual health assistant. Ask me anything about disease symptoms, prevention, or vaccination schedules.")
+# Load intents from data.json
+with open("data.json", "r") as f:
+    intents = json.load(f)
 
-# --- Load SpaCy Model ---
-try:
-    nlp = spacy.load("en_core_web_sm")
-    st.success("SpaCy model loaded successfully! ✅")
-except Exception as e:
-    st.error(f"Error loading SpaCy model: {e}")
-    st.stop()
+st.set_page_config(page_title="Odisha Health Awareness Chatbot", page_icon="🩺")
+st.title("🩺 Odisha Health Awareness Chatbot")
 
-# --- Load Intents (data.json) ---
-try:
-    with open("data.json", "r", encoding="utf-8") as file:
-        data = json.load(file)
-except Exception as e:
-    st.error(f"Could not load data.json: {e}")
-    st.stop()
-
-# --- NLP Based Response ---
-def get_response_with_nlp(user_input):
-    doc = nlp(user_input.lower())
-
-    # Dengue check
-    if any(token.text in ["dengue", "dengue fever"] for token in doc):
-        for intent in data['intents']:
-            if intent['tag'] == 'dengue_symptoms':
-                return random.choice(intent['responses'])
-
-    # Malaria check
-    elif any(token.text in ["malaria"] for token in doc):
-        for intent in data['intents']:
-            if intent['tag'] == 'malaria_prevention':
-                return random.choice(intent['responses'])
-
-    # Hair fall example
-    for intent in data['intents']:
-        if intent['tag'] == 'hair_fall' and any(word in user_input for word in intent['patterns']):
-            return random.choice(intent['responses'])
-
-    # Greetings / Goodbye
-    for intent in data['intents']:
-        if intent['tag'] == 'greeting' and any(word in user_input for word in intent['patterns']):
-            return random.choice(intent['responses'])
-        if intent['tag'] == 'goodbye' and any(word in user_input for word in intent['patterns']):
-            return random.choice(intent['responses'])
-
-    # General health words
-    if any(token.text in ["symptoms", "prevent", "prevention", "vaccination", "aware", "awareness", "helpline", "doctor", "health"] for token in doc):
-        return "I can provide general information on common diseases like Dengue and Malaria. Please ask a specific question."
-
-    # Default fallback
-    return "I’m sorry, I’m not trained to answer that. Please contact a healthcare professional for accurate advice."
-
-# --- Chat History ---
+# Initialize session state
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# Display chat messages
-for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+def get_response(user_input):
+    user_input = user_input.lower()
+    for intent in intents["intents"]:
+        for pattern in intent["patterns"]:
+            if pattern.lower() in user_input:
+                return random.choice(intent["responses"])
+    return "❌ I’m sorry, I don’t have information about that. Please consult a healthcare professional."
 
-# --- User Input ---
-if prompt := st.chat_input("Ask a health-related question..."):
-    # Store user message
-    st.session_state.messages.append({"role": "user", "content": prompt})
-    with st.chat_message("user"):
-        st.markdown(prompt)
+# --- Sidebar Quick Buttons ---
+st.sidebar.title("⚡ Quick Questions")
+if st.sidebar.button("🦟 Malaria Symptoms"):
+    st.session_state.messages.append({"role": "user", "text": "What are malaria symptoms?"})
+    response = get_response("What are malaria symptoms?")
+    st.session_state.messages.append({"role": "bot", "text": response})
 
-    # Generate response
-    response = get_response_with_nlp(prompt)
+if st.sidebar.button("🦟 Malaria Precautions"):
+    st.session_state.messages.append({"role": "user", "text": "How to prevent malaria?"})
+    response = get_response("How to prevent malaria?")
+    st.session_state.messages.append({"role": "bot", "text": response})
 
-    # Store bot message
-    st.session_state.messages.append({"role": "assistant", "content": response})
-    with st.chat_message("assistant"):
-        st.markdown(response)
+if st.sidebar.button("🩸 Dengue Symptoms"):
+    st.session_state.messages.append({"role": "user", "text": "What are dengue symptoms?"})
+    response = get_response("What are dengue symptoms?")
+    st.session_state.messages.append({"role": "bot", "text": response})
+
+if st.sidebar.button("🩸 Dengue Precautions"):
+    st.session_state.messages.append({"role": "user", "text": "How to prevent dengue?"})
+    response = get_response("How to prevent dengue?")
+    st.session_state.messages.append({"role": "bot", "text": response})
+
+if st.sidebar.button("🦠 COVID Symptoms"):
+    st.session_state.messages.append({"role": "user", "text": "What are covid symptoms?"})
+    response = get_response("What are covid symptoms?")
+    st.session_state.messages.append({"role": "bot", "text": response})
+
+if st.sidebar.button("🦠 COVID Precautions"):
+    st.session_state.messages.append({"role": "user", "text": "What are covid precautions?"})
+    response = get_response("What are covid precautions?")
+    st.session_state.messages.append({"role": "bot", "text": response})
+
+# --- Chat input box ---
+user_input = st.chat_input("Ask me about Malaria 🦟, Dengue 🩸, or COVID 🦠 ...")
+
+if user_input:
+    st.session_state.messages.append({"role": "user", "text": user_input})
+    response = get_response(user_input)
+    st.session_state.messages.append({"role": "bot", "text": response})
+
+# --- Chat history display ---
+for msg in st.session_state.messages:
+    if msg["role"] == "user":
+        st.markdown(f"<div style='text-align: left; padding:8px; background:#DCF8C6; border-radius:10px; margin:5px; display:inline-block;'>{msg['text']}</div>", unsafe_allow_html=True)
+    else:
+        st.markdown(f"<div style='text-align: right; padding:8px; background:#E6E6FA; border-radius:10px; margin:5px; display:inline-block;'>{msg['text']}</div>", unsafe_allow_html=True)

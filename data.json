@@ -1,45 +1,71 @@
 {
   "intents": [
     {
-      "tag": "greeting",
-      "patterns": ["hi", "hello", "hey", "good morning", "good evening"],
-      "responses": ["Hello! How can I assist you with your health today?", "Hi there! Ask me anything about health awareness."]
+      "tag": "malaria_precautions",
+      "patterns": [
+        "How to prevent malaria?",
+        "Precautions for malaria",
+        "How can I stay safe from malaria?"
+      ],
+      "responses": [
+        "🦟 To prevent **Malaria**: Use mosquito nets, apply insect repellent, wear long-sleeved clothes, and keep surroundings clean."
+      ]
     },
     {
-      "tag": "goodbye",
-      "patterns": ["bye", "goodbye", "see you", "take care"],
-      "responses": ["Goodbye! Stay healthy and safe.", "See you soon! Take care of your health."]
+      "tag": "malaria_symptoms",
+      "patterns": [
+        "What are malaria symptoms?",
+        "Signs of malaria",
+        "Symptoms of malaria"
+      ],
+      "responses": [
+        "🦟 Common **Malaria** symptoms: High fever, chills, sweating, headache, nausea, and muscle pain."
+      ]
+    },
+    {
+      "tag": "dengue_precautions",
+      "patterns": [
+        "How to prevent dengue?",
+        "Precautions for dengue",
+        "How can I stay safe from dengue?"
+      ],
+      "responses": [
+        "🩸 To prevent **Dengue**: Remove stagnant water, use mosquito repellents, cover water containers, and sleep under mosquito nets."
+      ]
     },
     {
       "tag": "dengue_symptoms",
-      "patterns": ["what are dengue symptoms", "dengue signs", "symptoms of dengue", "how to know if I have dengue"],
+      "patterns": [
+        "What are dengue symptoms?",
+        "Signs of dengue",
+        "Symptoms of dengue"
+      ],
       "responses": [
-        "Common symptoms of dengue include high fever, severe headache, pain behind the eyes, joint and muscle pain, nausea, vomiting, swollen glands, or rash.",
-        "Dengue symptoms: sudden high fever, severe headaches, pain behind eyes, muscle and joint pains, nausea, vomiting, skin rash."
+        "🩸 **Dengue** symptoms include: Sudden fever, severe headache, pain behind eyes, joint/muscle pain, skin rash, and mild bleeding (like gums/nose)."
       ]
     },
     {
-      "tag": "malaria_prevention",
-      "patterns": ["how to prevent malaria", "malaria prevention tips", "avoid malaria"],
+      "tag": "covid_precautions",
+      "patterns": [
+        "What are covid precautions?",
+        "How to prevent coronavirus?",
+        "Precautions for covid",
+        "How can I stay safe from covid?",
+        "Ways to avoid covid"
+      ],
       "responses": [
-        "To prevent malaria: use mosquito nets, wear protective clothing, use insect repellents, and eliminate stagnant water around your surroundings.",
-        "Malaria prevention includes using mosquito repellents, sleeping under insecticide-treated nets, and ensuring there is no stagnant water nearby."
+        "🦠 **COVID-19 Precautions**: Wash hands frequently, wear a mask 😷, maintain social distancing ↔️, get vaccinated 💉, and stay in well-ventilated areas."
       ]
     },
     {
-      "tag": "hair_fall",
-      "patterns": ["hair fall solutions", "why is my hair falling", "reduce hair fall"],
+      "tag": "covid_symptoms",
+      "patterns": [
+        "What are covid symptoms?",
+        "Signs of coronavirus",
+        "How do I know if I have covid?"
+      ],
       "responses": [
-        "Hair fall can happen due to stress, poor diet, or medical issues. Ensure you eat protein-rich food, avoid harsh chemicals, and consult a doctor if it continues.",
-        "To reduce hair fall: eat a healthy diet, stay hydrated, avoid excessive heat styling, and oil your hair regularly."
-      ]
-    },
-    {
-      "tag": "vaccination",
-      "patterns": ["vaccination schedule", "when should I get vaccinated", "vaccines for children"],
-      "responses": [
-        "Vaccination schedules vary by age. For children, important vaccines include BCG, Polio, DPT, Hepatitis B, and MMR. Please consult a doctor for accurate timings.",
-        "It’s best to follow the national immunization schedule. Contact a healthcare provider for a detailed vaccination plan."
+        "🦠 **COVID-19 Symptoms**: Fever 🤒, dry cough 😮‍💨, tiredness, loss of taste/smell 👃, and difficulty breathing. Please consult a doctor if symptoms persist."
       ]
     }
   ]
