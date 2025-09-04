@@ -2,13 +2,23 @@ import streamlit as st
 import json
 import random
 import spacy
+import subprocess
+import sys
 
-# Load the spaCy NLP model
-try:
-    nlp = spacy.load("en_core_web_sm")
-except OSError:
-    st.error("SpaCy model not found. Please run 'python -m spacy download en_core_web_sm' in your terminal.")
-    st.stop()
+# Use caching to download the model only once
+@st.cache_resource
+def download_spacy_model():
+    """
+    Downloads the spaCy language model.
+    """
+    try:
+        spacy.load("en_core_web_sm")
+    except OSError:
+        subprocess.run([sys.executable, "-m", "spacy", "download", "en_core_web_sm"])
+
+# Run the download function before loading the model
+download_spacy_model()
+nlp = spacy.load("en_core_web_sm")
 
 # Load the data from your JSON file
 with open('data.json', 'r', encoding='utf-8') as file:
