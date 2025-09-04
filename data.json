@@ -1,0 +1,39 @@
+{
+  "intents": [
+    {
+      "tag": "greeting",
+      "patterns": ["hi", "hello", "hey", "how are you"],
+      "responses": ["Hello! How can I help you with your health query today?", "Hi there! I'm here to provide health information.", "Greetings! What health topic would you like to know about?"]
+    },
+    {
+      "tag": "dengue_symptoms",
+      "patterns": ["what are the symptoms of dengue", "dengue symptoms", "i have fever and body ache", "how to know if i have dengue"],
+      "responses": ["Common symptoms of Dengue include: high fever, severe headache, joint and muscle pain, fatigue, and a skin rash. If you suspect you have dengue, please consult a doctor immediately."]
+    },
+    {
+      "tag": "malaria_prevention",
+      "patterns": ["how to prevent malaria", "malaria prevention", "mosquito bites", "stop malaria"],
+      "responses": ["To prevent Malaria, use mosquito nets, wear long-sleeved clothing, use insect repellent, and ensure there is no stagnant water around your home where mosquitoes can breed. Stay safe!"]
+    },
+    {
+      "tag": "vaccination_schedule",
+      "patterns": ["child vaccination schedule", "vaccination for babies", "what vaccines do i need"],
+      "responses": ["Vaccination schedules can vary. For a specific schedule, please visit a nearby Public Health Centre or check the official Government of Odisha Health website for the most up-to-date information."]
+    },
+    {
+      "tag": "real_time_alerts",
+      "patterns": ["are there any disease outbreaks", "public health alerts", "real time alerts"],
+      "responses": ["Please note: There are no active high-alert outbreaks in your area right now. For the latest updates, follow official government announcements."]
+    },
+    {
+      "tag": "contact_info",
+      "patterns": ["contact a doctor", "emergency help", "health helpline number", "where to get help"],
+      "responses": ["If you have a medical emergency, please call the Odisha State Health Helpline or visit your nearest hospital. For non-emergency advice, you can visit your local Primary Health Centre (PHC)."]
+    },
+    {
+      "tag": "goodbye",
+      "patterns": ["bye", "see you later", "goodbye", "thanks"],
+      "responses": ["You're welcome! Stay healthy and safe.", "Goodbye! Feel free to reach out if you have more questions.", "Thank you for using the chatbot. Have a great day!"]
+    }
+  ]
+}
