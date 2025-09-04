@@ -39,6 +39,16 @@
       "tag": "hair_fall",
       "patterns": ["i am facing hair fall", "hair fall from few months", "hair is falling", "hair loss symptoms", "why is my hair falling"],
       "responses": ["Hair fall can be caused by many factors, including stress, diet, and genetics. It's recommended to consult a doctor or a dermatologist to determine the cause and get a proper diagnosis.", "Hair fall is a common concern. A balanced diet and good hair care can help, but it is best to see a healthcare professional for a personalized consultation."]
+    },
+    {
+        "tag": "goodbye",
+        "patterns": ["bye", "see you later", "goodbye", "thanks"],
+        "responses": ["You're welcome! Stay healthy and safe.", "Goodbye! Feel free to reach out if you have more questions.", "Thank you for using the chatbot. Have a great day!"]
+    },
+    {
+        "tag": "hair_fall",
+        "patterns": ["i am facing hair fall", "hair fall from few months", "hair is falling", "hair loss symptoms", "why is my hair falling"],
+        "responses": ["Hair fall can be caused by many factors..."]
     }
   ]
 }
