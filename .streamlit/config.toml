@@ -1,5 +1,7 @@
 [theme]
 base="light"
-
-
-
+primaryColor="#008080"        # Teal (health theme)
+backgroundColor="#ffffff"     # White background (clear in dark mode too)
+secondaryBackgroundColor="#f0f8ff"  # Light blue shade
+textColor="#000000"           # Black text for readability
+font="sans serif"

@@ -3,24 +3,59 @@ import json
 import random
 import spacy
 from rapidfuzz import fuzz
+import requests
+import mysql.connector
+from mysql.connector import errorcode
 
 # Load spaCy model
 nlp = spacy.load("en_core_web_sm")
 
-# Load intents from data.json
-with open("data.json", "r") as f:
-    intents = json.load(f)
-
 st.set_page_config(page_title="Odisha Health Awareness Chatbot", page_icon="🩺")
 st.title("🩺 Odisha Health Awareness Chatbot")
+
+# MySQL database connection details
+DB_CONFIG = {
+    "host": "localhost",
+    "user": "chatbot_user",  # <-- CHANGE THIS
+    "passwd": "your_password",  # <-- CHANGE THIS
+    "database": "odisha_health_chatbot"
+}
+
+# Function to get intents from the database
+def get_intents_from_db():
+    try:
+        conn = mysql.connector.connect(**DB_CONFIG)
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT tag, patterns, responses FROM intents")
+        intents_data = cursor.fetchall()
+        
+        # Parse patterns and responses from JSON strings back into lists
+        for intent in intents_data:
+            intent['patterns'] = json.loads(intent['patterns'])
+            intent['responses'] = json.loads(intent['responses'])
+            
+        return {"intents": intents_data}
+    except mysql.connector.Error as err:
+        if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+            st.error("Something is wrong with your username or password. Please check your credentials.")
+        elif err.errno == errorcode.ER_BAD_DB_ERROR:
+            st.error("Database does not exist. Please run the SQL script to create the database.")
+        else:
+            st.error(f"Error: {err}")
+        return {"intents": []}
+    finally:
+        if 'conn' in locals() and conn.is_connected():
+            cursor.close()
+            conn.close()
+
+# Load intents from the database at the start
+intents = get_intents_from_db()
 
 # Initialize session state
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-
-from rapidfuzz import fuzz
-
+# --- Chatbot response logic with corrected Wikipedia fallback ---
 def get_response(user_input):
     user_input = user_input.lower().strip()
     doc = nlp(user_input)
@@ -31,36 +66,45 @@ def get_response(user_input):
 
     for intent in intents["intents"]:
         for pattern in intent["patterns"]:
-            # 1. Fuzzy string similarity
+            # Fuzzy string similarity
             score = fuzz.ratio(user_input, pattern.lower())
 
-            # 2. Keyword overlap
+            # Keyword overlap
             pattern_words = set(pattern.lower().split())
             input_words = set(user_input.split())
             overlap = len(pattern_words & input_words)
             score += overlap * 10
 
-            # 3. Semantic similarity (SpaCy)
+            # Semantic similarity (SpaCy)
             pattern_doc = nlp(pattern.lower())
-            similarity = doc.similarity(pattern_doc)  # value between 0–1
-            score += similarity * 100  # boost score with semantic meaning
+            similarity = doc.similarity(pattern_doc)
+            score += similarity * 100
 
-            # Pick the best response
             if score > best_score:
                 best_score = score
-                best_match = intent
                 chosen_response = random.choice(intent["responses"])
 
-    # Threshold: ensure random nonsense doesn't match
+    # Threshold for intent match
     if best_score > 70:
         return chosen_response
     else:
-        return "❌ I’m sorry, I don’t have information about that. Please consult a healthcare professional."
-
-    if best_score > 60:
-        return chosen_response
-    else:
-        return "❌ I’m sorry, I don’t have information about that. Please consult a healthcare professional."
+        # Wikipedia API fallback
+        try:
+            WIKI_API_URL = f"https://en.wikipedia.org/api/rest_v1/page/summary/{user_input.replace(' ', '_')}"
+            response = requests.get(WIKI_API_URL, timeout=5)
+            if response.status_code == 200:
+                data = response.json()
+                extract = data.get("extract", "No detailed info found.")
+                
+                # Check for unhelpful Wikipedia pages
+                if 'may refer to' in extract or 'The following is a list of' in extract:
+                    return "❌ I’m sorry, I don’t have information about that. Please consult a healthcare professional."
+                
+                return f"🌐 Wikipedia info about **{user_input.title()}**:\n\n{extract}"
+            else:
+                return f"❌ Sorry, I don't have info about '{user_input}'. Please consult a healthcare professional."
+        except requests.exceptions.RequestException:
+            return f"❌ Sorry, I couldn't fetch info for '{user_input}'. Please consult a healthcare professional."
 
 # --- Sidebar Quick Buttons ---
 st.sidebar.title("⚡ Quick Questions")
