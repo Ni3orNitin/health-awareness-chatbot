@@ -2,43 +2,45 @@
   "intents": [
     {
       "tag": "greeting",
-      "patterns": ["hi", "hello", "hey", "how are you", "hlo", "hey there", "good morning", "good afternoon", "good evening", "greetings", "hyy"],
-      "responses": ["Hello! How can I help you with your health query today?", "Hi there! I'm here to provide health information.", "Greetings! What health topic would you like to know about?"]
-    },
-    {
-      "tag": "dengue_symptoms",
-      "patterns": ["what are the symptoms of dengue", "dengue symptoms", "i have fever and body ache", "how to know if i have dengue"],
-      "responses": ["Common symptoms of Dengue include: high fever, severe headache, joint and muscle pain, fatigue, and a skin rash. If you suspect you have dengue, please consult a doctor immediately."]
-    },
-    {
-      "tag": "malaria_prevention",
-      "patterns": ["how to prevent malaria", "malaria prevention", "mosquito bites", "stop malaria"],
-      "responses": ["To prevent Malaria, use mosquito nets, wear long-sleeved clothing, use insect repellent, and ensure there is no stagnant water around your home where mosquitoes can breed. Stay safe!"]
-    },
-    {
-      "tag": "vaccination_schedule",
-      "patterns": ["child vaccination schedule", "vaccination for babies", "what vaccines do i need"],
-      "responses": ["Vaccination schedules can vary. For a specific schedule, please visit a nearby Public Health Centre or check the official Government of Odisha Health website for the most up-to-date information."]
-    },
-    {
-      "tag": "real_time_alerts",
-      "patterns": ["are there any disease outbreaks", "public health alerts", "real time alerts"],
-      "responses": ["Please note: There are no active high-alert outbreaks in your area right now. For the latest updates, follow official government announcements."]
-    },
-    {
-      "tag": "contact_info",
-      "patterns": ["contact a doctor", "emergency help", "health helpline number", "where to get help"],
-      "responses": ["If you have a medical emergency, please call the Odisha State Health Helpline or visit your nearest hospital. For non-emergency advice, you can visit your local Primary Health Centre (PHC)."]
+      "patterns": ["hi", "hello", "hey", "good morning", "good evening"],
+      "responses": ["Hello! How can I assist you with your health today?", "Hi there! Ask me anything about health awareness."]
     },
     {
       "tag": "goodbye",
-      "patterns": ["bye", "see you later", "goodbye", "thanks"],
-      "responses": ["You're welcome! Stay healthy and safe.", "Goodbye! Feel free to reach out if you have more questions.", "Thank you for using the chatbot. Have a great day!"]
+      "patterns": ["bye", "goodbye", "see you", "take care"],
+      "responses": ["Goodbye! Stay healthy and safe.", "See you soon! Take care of your health."]
+    },
+    {
+      "tag": "dengue_symptoms",
+      "patterns": ["what are dengue symptoms", "dengue signs", "symptoms of dengue", "how to know if I have dengue"],
+      "responses": [
+        "Common symptoms of dengue include high fever, severe headache, pain behind the eyes, joint and muscle pain, nausea, vomiting, swollen glands, or rash.",
+        "Dengue symptoms: sudden high fever, severe headaches, pain behind eyes, muscle and joint pains, nausea, vomiting, skin rash."
+      ]
+    },
+    {
+      "tag": "malaria_prevention",
+      "patterns": ["how to prevent malaria", "malaria prevention tips", "avoid malaria"],
+      "responses": [
+        "To prevent malaria: use mosquito nets, wear protective clothing, use insect repellents, and eliminate stagnant water around your surroundings.",
+        "Malaria prevention includes using mosquito repellents, sleeping under insecticide-treated nets, and ensuring there is no stagnant water nearby."
+      ]
     },
     {
       "tag": "hair_fall",
-      "patterns": ["i am facing hair fall", "hair fall from few months", "hair is falling", "hair loss symptoms", "why is my hair falling"],
-      "responses": ["Hair fall can be caused by many factors, including stress, diet, and genetics. It's recommended to consult a doctor or a dermatologist to determine the cause and get a proper diagnosis.", "Hair fall is a common concern. A balanced diet and good hair care can help, but it is best to see a healthcare professional for a personalized consultation."]
+      "patterns": ["hair fall solutions", "why is my hair falling", "reduce hair fall"],
+      "responses": [
+        "Hair fall can happen due to stress, poor diet, or medical issues. Ensure you eat protein-rich food, avoid harsh chemicals, and consult a doctor if it continues.",
+        "To reduce hair fall: eat a healthy diet, stay hydrated, avoid excessive heat styling, and oil your hair regularly."
+      ]
+    },
+    {
+      "tag": "vaccination",
+      "patterns": ["vaccination schedule", "when should I get vaccinated", "vaccines for children"],
+      "responses": [
+        "Vaccination schedules vary by age. For children, important vaccines include BCG, Polio, DPT, Hepatitis B, and MMR. Please consult a doctor for accurate timings.",
+        "It’s best to follow the national immunization schedule. Contact a healthcare provider for a detailed vaccination plan."
+      ]
     }
   ]
 }
