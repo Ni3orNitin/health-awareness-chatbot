@@ -37,23 +37,9 @@ st.set_page_config(page_title="Odisha Health Awareness Chatbot", page_icon="🩺
 st.title("🩺 Odisha Health Awareness Chatbot (SQLite Edition)")
 
 # --- Database connection helper ---
-def get_connection():
-    return sqlite3.connect("health.db")
-
-# --- Query DB for disease info ---
-def get_disease_info(disease_name: str):
-    conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT name, symptoms, treatment, side_effects FROM diseases WHERE LOWER(name)=?", (disease_name.lower(),))
-    row = cursor.fetchone()
-    conn.close()
-    return row
-
-# --- Chatbot response logic ---
 def get_response(user_input):
     user_input_lower = user_input.lower().strip()
     
-    # Check if a disease name is mentioned
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute("SELECT name FROM diseases")
@@ -62,18 +48,22 @@ def get_response(user_input):
 
     best_match = None
     best_score = 0
-    for disease in all_diseases:
-        score = fuzz.ratio(user_input_lower, disease.lower())
-        if score > best_score:
-            best_score = score
-            best_match = disease
+    
+    # Iterate through each word in the user's input to find a match
+    for word in user_input_lower.split():
+        for disease in all_diseases:
+            # Check for a high fuzzy ratio score for a single word
+            score = fuzz.ratio(word, disease.lower())
+            if score > best_score:
+                best_score = score
+                best_match = disease
 
     if best_match and best_score > 70:
         disease_data = get_disease_info(best_match)
         if disease_data:
             name, symptoms, treatment, side_effects = disease_data
             
-            # Simple intent recognition using keywords and Spacy
+            # Use Spacy to check for specific intents
             doc = nlp(user_input_lower)
             if any(token.text in ["symptom", "symptoms"] for token in doc):
                 return f"🦠 Symptoms of **{name}**: {symptoms}"
@@ -89,7 +79,7 @@ def get_response(user_input):
                     f"- **Side Effects**: {side_effects}"
                 )
 
-    # Wikipedia fallback
+    # ... The rest of your code for Wikipedia fallback and final fallback ...
     try:
         WIKI_API_URL = f"https://en.wikipedia.org/api/rest_v1/page/summary/{user_input_lower.replace(' ', '_')}"
         response = requests.get(WIKI_API_URL, timeout=5)
@@ -102,9 +92,8 @@ def get_response(user_input):
                 return f"🌐 Wikipedia info about **{user_input.title()}**:\n\n{extract}"
     except requests.exceptions.RequestException:
         pass
-    
-    return f"❌ Sorry, I don’t have information about '{user_input}'. Please consult a healthcare professional."
 
+    return f"❌ Sorry, I don’t have information about '{user_input}'. Please consult a healthcare professional."
 # --- Session State ---
 if "messages" not in st.session_state:
     st.session_state.messages = []
