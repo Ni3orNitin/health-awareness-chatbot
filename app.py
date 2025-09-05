@@ -4,8 +4,33 @@ import spacy
 import random
 from rapidfuzz import fuzz
 import requests
+import os
+import shutil
+import subprocess
+import sys
 
-# Load spaCy model
+# --- Spacy Model Setup ---
+# This function ensures the model is downloaded for deployment.
+@st.cache_resource
+def download_spacy_model():
+    model_name = "en_core_web_sm"
+    try:
+        spacy.load(model_name)
+    except OSError:
+        subprocess.run([sys.executable, "-m", "spacy", "download", model_name])
+        
+    try:
+        model_path = os.path.join(spacy.util.get_data_path(), model_name)
+        if not os.path.exists(model_path):
+            shutil.copytree(
+                os.path.join(sys.prefix, "share", "spacy", model_name),
+                model_path
+            )
+    except Exception as e:
+        st.error(f"Error while linking model: {e}")
+        st.stop()
+
+download_spacy_model()
 nlp = spacy.load("en_core_web_sm")
 
 st.set_page_config(page_title="Odisha Health Awareness Chatbot", page_icon="🩺")
@@ -27,9 +52,8 @@ def get_disease_info(disease_name: str):
 # --- Chatbot response logic ---
 def get_response(user_input):
     user_input_lower = user_input.lower().strip()
-    doc = nlp(user_input_lower)
-
-    # Check if input mentions a disease
+    
+    # Check if a disease name is mentioned
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute("SELECT name FROM diseases")
@@ -48,14 +72,22 @@ def get_response(user_input):
         disease_data = get_disease_info(best_match)
         if disease_data:
             name, symptoms, treatment, side_effects = disease_data
-            if "symptom" in user_input_lower:
+            
+            # Simple intent recognition using keywords and Spacy
+            doc = nlp(user_input_lower)
+            if any(token.text in ["symptom", "symptoms"] for token in doc):
                 return f"🦠 Symptoms of **{name}**: {symptoms}"
-            elif "treatment" in user_input_lower:
+            elif any(token.text in ["treatment", "treat"] for token in doc):
                 return f"💊 Treatment for **{name}**: {treatment}"
-            elif "side effect" in user_input_lower:
+            elif any(token.text in ["side effect", "side effects"] for token in doc):
                 return f"⚠️ Side effects of treatment for **{name}**: {side_effects}"
             else:
-                return f"ℹ️ Info about **{name}**:\n- Symptoms: {symptoms}\n- Treatment: {treatment}\n- Side Effects: {side_effects}"
+                return (
+                    f"ℹ️ Info about **{name}**:\n\n"
+                    f"- **Symptoms**: {symptoms}\n"
+                    f"- **Treatment**: {treatment}\n"
+                    f"- **Side Effects**: {side_effects}"
+                )
 
     # Wikipedia fallback
     try:
@@ -70,7 +102,7 @@ def get_response(user_input):
                 return f"🌐 Wikipedia info about **{user_input.title()}**:\n\n{extract}"
     except requests.exceptions.RequestException:
         pass
-
+    
     return f"❌ Sorry, I don’t have information about '{user_input}'. Please consult a healthcare professional."
 
 # --- Session State ---
@@ -82,17 +114,17 @@ st.sidebar.title("⚡ Quick Questions")
 if st.sidebar.button("🦟 Malaria Symptoms"):
     st.session_state.messages.append({"role": "user", "text": "What are malaria symptoms?"})
     response = get_response("What are malaria symptoms?")
-    st.session_state.messages.append({"role": "bot", "text": response})
+    st.session_state.messages.append({"role": "assistant", "text": response})
 
 if st.sidebar.button("🦟 Malaria Treatment"):
     st.session_state.messages.append({"role": "user", "text": "How to treat malaria?"})
     response = get_response("How to treat malaria?")
-    st.session_state.messages.append({"role": "bot", "text": response})
+    st.session_state.messages.append({"role": "assistant", "text": response})
 
 if st.sidebar.button("🩸 Diabetes Symptoms"):
     st.session_state.messages.append({"role": "user", "text": "What are diabetes symptoms?"})
     response = get_response("What are diabetes symptoms?")
-    st.session_state.messages.append({"role": "bot", "text": response})
+    st.session_state.messages.append({"role": "assistant", "text": response})
 
 # --- Chat input box ---
 user_input = st.chat_input("Ask me about Malaria, Diabetes or other diseases...")
@@ -100,11 +132,9 @@ user_input = st.chat_input("Ask me about Malaria, Diabetes or other diseases..."
 if user_input:
     st.session_state.messages.append({"role": "user", "text": user_input})
     response = get_response(user_input)
-    st.session_state.messages.append({"role": "bot", "text": response})
+    st.session_state.messages.append({"role": "assistant", "text": response})
 
 # --- Chat history display ---
 for msg in st.session_state.messages:
-    if msg["role"] == "user":
-        st.markdown(f"<div style='text-align: left; padding:8px; background:#DCF8C6; border-radius:10px; margin:5px; display:inline-block;'>{msg['text']}</div>", unsafe_allow_html=True)
-    else:
-        st.markdown(f"<div style='text-align: right; padding:8px; background:#E6E6FA; border-radius:10px; margin:5px; display:inline-block;'>{msg['text']}</div>", unsafe_allow_html=True)
+    with st.chat_message(msg["role"]):
+        st.write(msg["text"])
