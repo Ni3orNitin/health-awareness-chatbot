@@ -1,0 +1,27 @@
+import sqlite3
+
+# connect to sqlite (creates health.db if not exists)
+conn = sqlite3.connect("health.db")
+cursor = conn.cursor()
+
+# create diseases table
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS diseases (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT UNIQUE,
+    symptoms TEXT,
+    treatment TEXT,
+    side_effects TEXT
+)
+""")
+
+# insert sample data
+cursor.execute("""
+INSERT OR IGNORE INTO diseases (name, symptoms, treatment, side_effects)
+VALUES
+('Malaria', 'Fever, chills, headache', 'Antimalarial drugs', 'Nausea, dizziness'),
+('Diabetes', 'Increased thirst, frequent urination', 'Insulin, lifestyle changes', 'Low blood sugar, fatigue')
+""")
+
+conn.commit()
+conn.close()

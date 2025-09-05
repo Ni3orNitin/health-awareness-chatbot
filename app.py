@@ -1,127 +1,81 @@
 import streamlit as st
-import json
-import random
+import sqlite3
 import spacy
+import random
 from rapidfuzz import fuzz
 import requests
-import mysql.connector
-from mysql.connector import errorcode
 
 # Load spaCy model
 nlp = spacy.load("en_core_web_sm")
 
 st.set_page_config(page_title="Odisha Health Awareness Chatbot", page_icon="🩺")
-st.title("🩺 Odisha Health Awareness Chatbot")
+st.title("🩺 Odisha Health Awareness Chatbot (SQLite Edition)")
 
-# MySQL database connection details
-DB_CONFIG = {
-    "host": "localhost",
-    "user": "chatbot_user",  # <-- USE THE USERNAME YOU CREATED
-    "passwd": "your_password",  # <-- USE THE PASSWORD YOU CREATED
-    "database": "odisha_health_chatbot"
-}
+# --- Database connection helper ---
+def get_connection():
+    return sqlite3.connect("health.db")
 
-# Function to get intents from the database
-def get_intents_from_db():
-    try:
-        conn = mysql.connector.connect(**DB_CONFIG)
-        cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT tag, patterns, responses FROM intents")
-        intents_data = cursor.fetchall()
-        
-        # Parse patterns and responses from JSON strings back into lists
-        for intent in intents_data:
-            intent['patterns'] = json.loads(intent['patterns'])
-            intent['responses'] = json.loads(intent['responses'])
-            
-        return {"intents": intents_data}
-    except mysql.connector.Error as err:
-        if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
-            st.error("Something is wrong with your username or password. Please check your credentials.")
-        elif err.errno == errorcode.ER_BAD_DB_ERROR:
-            st.error("Database does not exist. Please run the SQL script to create the database.")
-        else:
-            st.error(f"Error: {err}")
-        return {"intents": []}
-    finally:
-        if 'conn' in locals() and conn.is_connected():
-            cursor.close()
-            conn.close()
+# --- Query DB for disease info ---
+def get_disease_info(disease_name: str):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT name, symptoms, treatment, side_effects FROM diseases WHERE LOWER(name)=?", (disease_name.lower(),))
+    row = cursor.fetchone()
+    conn.close()
+    return row
 
-# Load intents from the database at the start
-intents = get_intents_from_db()
-
-# Initialize session state
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-
-# --- Chatbot response logic with corrected Wikipedia fallback and logging ---
+# --- Chatbot response logic ---
 def get_response(user_input):
     user_input_lower = user_input.lower().strip()
     doc = nlp(user_input_lower)
 
+    # Check if input mentions a disease
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT name FROM diseases")
+    all_diseases = [row[0] for row in cursor.fetchall()]
+    conn.close()
+
     best_match = None
     best_score = 0
-    chosen_response = None
+    for disease in all_diseases:
+        score = fuzz.ratio(user_input_lower, disease.lower())
+        if score > best_score:
+            best_score = score
+            best_match = disease
 
-    for intent in intents["intents"]:
-        for pattern in intent["patterns"]:
-            # Fuzzy string similarity
-            score = fuzz.ratio(user_input_lower, pattern.lower())
-
-            # Keyword overlap
-            pattern_words = set(pattern.lower().split())
-            input_words = set(user_input_lower.split())
-            overlap = len(pattern_words & input_words)
-            score += overlap * 10
-
-            # Semantic similarity (SpaCy)
-            pattern_doc = nlp(pattern.lower())
-            similarity = doc.similarity(pattern_doc)
-            score += similarity * 100
-
-            if score > best_score:
-                best_score = score
-                chosen_response = random.choice(intent["responses"])
-
-    # Threshold for intent match
-    if best_score > 70:
-        response_text = chosen_response
-    else:
-        # Wikipedia API fallback
-        try:
-            WIKI_API_URL = f"https://en.wikipedia.org/api/rest_v1/page/summary/{user_input_lower.replace(' ', '_')}"
-            response = requests.get(WIKI_API_URL, timeout=5)
-            if response.status_code == 200:
-                data = response.json()
-                extract = data.get("extract", "No detailed info found.")
-                
-                # Check for unhelpful Wikipedia pages
-                if 'may refer to' in extract or 'The following is a list of' in extract:
-                    response_text = "❌ I’m sorry, I don’t have information about that. Please consult a healthcare professional."
-                else:
-                    response_text = f"🌐 Wikipedia info about **{user_input.title()}**:\n\n{extract}"
+    if best_match and best_score > 70:
+        disease_data = get_disease_info(best_match)
+        if disease_data:
+            name, symptoms, treatment, side_effects = disease_data
+            if "symptom" in user_input_lower:
+                return f"🦠 Symptoms of **{name}**: {symptoms}"
+            elif "treatment" in user_input_lower:
+                return f"💊 Treatment for **{name}**: {treatment}"
+            elif "side effect" in user_input_lower:
+                return f"⚠️ Side effects of treatment for **{name}**: {side_effects}"
             else:
-                response_text = f"❌ Sorry, I don't have info about '{user_input}'. Please consult a healthcare professional."
-        except requests.exceptions.RequestException:
-            response_text = f"❌ Sorry, I couldn't fetch info for '{user_input}'. Please consult a healthcare professional."
-            
-    # Log the interaction to the database
-    try:
-        conn = mysql.connector.connect(**DB_CONFIG)
-        cursor = conn.cursor()
-        sql = "INSERT INTO conversation_logs (user_input, chatbot_response) VALUES (%s, %s)"
-        val = (user_input, response_text)
-        cursor.execute(sql, val)
-        conn.commit()
-    except mysql.connector.Error as err:
-        st.error(f"Error logging conversation: {err}")
-    finally:
-        if 'conn' in locals() and conn.is_connected():
-            cursor.close()
-            conn.close()
+                return f"ℹ️ Info about **{name}**:\n- Symptoms: {symptoms}\n- Treatment: {treatment}\n- Side Effects: {side_effects}"
 
-    return response_text
+    # Wikipedia fallback
+    try:
+        WIKI_API_URL = f"https://en.wikipedia.org/api/rest_v1/page/summary/{user_input_lower.replace(' ', '_')}"
+        response = requests.get(WIKI_API_URL, timeout=5)
+        if response.status_code == 200:
+            data = response.json()
+            extract = data.get("extract", "No detailed info found.")
+            if 'may refer to' in extract or 'The following is a list of' in extract:
+                return "❌ Sorry, I don’t have detailed info. Please consult a healthcare professional."
+            else:
+                return f"🌐 Wikipedia info about **{user_input.title()}**:\n\n{extract}"
+    except requests.exceptions.RequestException:
+        pass
+
+    return f"❌ Sorry, I don’t have information about '{user_input}'. Please consult a healthcare professional."
+
+# --- Session State ---
+if "messages" not in st.session_state:
+    st.session_state.messages = []
 
 # --- Sidebar Quick Buttons ---
 st.sidebar.title("⚡ Quick Questions")
@@ -130,33 +84,18 @@ if st.sidebar.button("🦟 Malaria Symptoms"):
     response = get_response("What are malaria symptoms?")
     st.session_state.messages.append({"role": "bot", "text": response})
 
-if st.sidebar.button("🦟 Malaria Precautions"):
-    st.session_state.messages.append({"role": "user", "text": "How to prevent malaria?"})
-    response = get_response("How to prevent malaria?")
+if st.sidebar.button("🦟 Malaria Treatment"):
+    st.session_state.messages.append({"role": "user", "text": "How to treat malaria?"})
+    response = get_response("How to treat malaria?")
     st.session_state.messages.append({"role": "bot", "text": response})
 
-if st.sidebar.button("🩸 Dengue Symptoms"):
-    st.session_state.messages.append({"role": "user", "text": "What are dengue symptoms?"})
-    response = get_response("What are dengue symptoms?")
-    st.session_state.messages.append({"role": "bot", "text": response})
-
-if st.sidebar.button("🩸 Dengue Precautions"):
-    st.session_state.messages.append({"role": "user", "text": "How to prevent dengue?"})
-    response = get_response("How to prevent dengue?")
-    st.session_state.messages.append({"role": "bot", "text": response})
-
-if st.sidebar.button("🦠 COVID Symptoms"):
-    st.session_state.messages.append({"role": "user", "text": "What are covid symptoms?"})
-    response = get_response("What are covid symptoms?")
-    st.session_state.messages.append({"role": "bot", "text": response})
-
-if st.sidebar.button("🦠 COVID Precautions"):
-    st.session_state.messages.append({"role": "user", "text": "What are covid precautions?"})
-    response = get_response("What are covid precautions?")
+if st.sidebar.button("🩸 Diabetes Symptoms"):
+    st.session_state.messages.append({"role": "user", "text": "What are diabetes symptoms?"})
+    response = get_response("What are diabetes symptoms?")
     st.session_state.messages.append({"role": "bot", "text": response})
 
 # --- Chat input box ---
-user_input = st.chat_input("Ask me about Malaria 🦟, Dengue 🩸, or COVID 🦠 ...")
+user_input = st.chat_input("Ask me about Malaria, Diabetes or other diseases...")
 
 if user_input:
     st.session_state.messages.append({"role": "user", "text": user_input})
