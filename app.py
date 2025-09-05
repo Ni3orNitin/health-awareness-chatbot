@@ -19,6 +19,7 @@ DB_CONFIG = {
     "user": "chatbot_user",  # <-- USE THE USERNAME YOU CREATED
     "passwd": "your_password",  # <-- USE THE PASSWORD YOU CREATED
     "database": "odisha_health_chatbot"
+python3 -m streamlit run app.py
 }
 
 # Function to get intents from the database
