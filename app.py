@@ -5,38 +5,51 @@ import random
 from rapidfuzz import fuzz
 import requests
 import os
-import shutil
 import subprocess
 import sys
 
 # --- Spacy Model Setup ---
-# This function ensures the model is downloaded for deployment.
+# A more robust approach for Streamlit Cloud deployment
 @st.cache_resource
-def download_spacy_model():
+def load_spacy_model():
     model_name = "en_core_web_sm"
     try:
-        spacy.load(model_name)
+        nlp = spacy.load(model_name)
     except OSError:
-        subprocess.run([sys.executable, "-m", "spacy", "download", model_name])
-        
-    try:
-        model_path = os.path.join(spacy.util.get_data_path(), model_name)
-        if not os.path.exists(model_path):
-            shutil.copytree(
-                os.path.join(sys.prefix, "share", "spacy", model_name),
-                model_path
-            )
-    except Exception as e:
-        st.error(f"Error while linking model: {e}")
-        st.stop()
+        # If the model is not found, install it directly from the URL
+        st.info("SpaCy model not found. Downloading the model...")
+        subprocess.run(
+            [
+                sys.executable,
+                "-m",
+                "pip",
+                "install",
+                "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1-py3-none-any.whl"
+            ],
+            check=True
+        )
+        nlp = spacy.load(model_name)
+    return nlp
 
-download_spacy_model()
-nlp = spacy.load("en_core_web_sm")
+nlp = load_spacy_model()
 
 st.set_page_config(page_title="Odisha Health Awareness Chatbot", page_icon="🩺")
 st.title("🩺 Odisha Health Awareness Chatbot (SQLite Edition)")
 
 # --- Database connection helper ---
+def get_connection():
+    return sqlite3.connect("health.db")
+
+# --- Query DB for disease info ---
+def get_disease_info(disease_name: str):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT name, symptoms, treatment, side_effects FROM diseases WHERE LOWER(name)=?", (disease_name.lower(),))
+    row = cursor.fetchone()
+    conn.close()
+    return row
+
+# --- Chatbot response logic ---
 def get_response(user_input):
     user_input_lower = user_input.lower().strip()
     
@@ -79,7 +92,7 @@ def get_response(user_input):
                     f"- **Side Effects**: {side_effects}"
                 )
 
-    # ... The rest of your code for Wikipedia fallback and final fallback ...
+    # Wikipedia fallback
     try:
         WIKI_API_URL = f"https://en.wikipedia.org/api/rest_v1/page/summary/{user_input_lower.replace(' ', '_')}"
         response = requests.get(WIKI_API_URL, timeout=5)
@@ -92,7 +105,7 @@ def get_response(user_input):
                 return f"🌐 Wikipedia info about **{user_input.title()}**:\n\n{extract}"
     except requests.exceptions.RequestException:
         pass
-
+    
     return f"❌ Sorry, I don’t have information about '{user_input}'. Please consult a healthcare professional."
 # --- Session State ---
 if "messages" not in st.session_state:
