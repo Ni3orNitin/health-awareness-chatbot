@@ -577,6 +577,126 @@
       "responses": [
         "I am a health awareness chatbot developed to provide information on common diseases and health tips. My data is sourced from health-related datasets and I can help you with symptoms and precautions."
       ]
+    },
+    {
+      "tag": "feedback",
+      "patterns": [
+        "Feedback",
+        "give feedback",
+        "how to provide feedback"
+      ],
+      "responses": [
+        "We value your feedback! Please share your thoughts and suggestions to help us improve. You can contact us at ....."
+      ]
+    },
+    {
+      "tag": "report_issue",
+      "patterns": [
+        "Report Issue",
+        "report a problem",
+        "something is wrong"
+      ],
+      "responses": [
+        "If you encounter any issues, please report them to us at ..... We appreciate your help in improving our services."
+      ]
+    },
+    {
+      "tag": "privacy_policy",
+      "patterns": [
+        "Privacy Policy",
+        "data protection",
+        "how is my data used"
+      ],
+      "responses": [
+        "Your privacy is important to us. We do not store any personal data. For more details, please refer to our privacy policy at ....."
+      ]
+    },
+    {
+      "tag": "terms_of_service",
+      "patterns": [
+        "Terms of Service",
+        "terms and conditions",
+        "service agreement"
+      ],
+      "responses": [
+        "By using this chatbot, you agree to our terms of service. Please read the full terms at ....."
+      ]
+    },    {
+      "tag": "contact_us",
+      "patterns": [
+        "Contact Us",
+        "how to reach you",
+        "customer support"
+      ],
+      "responses": [
+        "You can contact us at ..... for any inquiries or support. We're here to help!"
+      ]
+    },
+    {
+      "tag": "about",
+      "patterns": [
+        "About",
+        "who are you",
+        "what is this chatbot"
+      ],
+      "responses": [
+        "I am a health awareness chatbot developed to provide information on common diseases and health tips. My data is sourced from health-related datasets and I can help you with symptoms and precautions."
+      ]
+    },
+    {
+      "tag": "feedback",
+      "patterns": [
+        "Feedback",
+        "give feedback",
+        "how to provide feedback"
+      ],
+      "responses": [
+        "We value your feedback! Please share your thoughts and suggestions to help us improve. You can contact us at ....."
+      ]
+    },
+    {
+      "tag": "report_issue",
+      "patterns": [
+        "Report Issue",
+        "report a problem",
+        "something is wrong"
+      ],
+      "responses": [
+        "If you encounter any issues, please report them to us at ..... We appreciate your help in improving our services."
+      ]
+    },
+    {
+      "tag": "privacy_policy",
+      "patterns": [
+        "Privacy Policy",
+        "data protection",
+        "how is my data used"
+      ],
+      "responses": [
+        "Your privacy is important to us. We do not store any personal data. For more details, please refer to our privacy policy at ....."
+      ]
+    },
+    {
+      "tag": "terms_of_service",
+      "patterns": [
+        "Terms of Service",
+        "terms and conditions",
+        "service agreement"
+      ],
+      "responses": [
+        "By using this chatbot, you agree to our terms of service. Please read the full terms at ....."
+      ]
+    },
+    {
+      "tag": "contact_us",
+      "patterns": [
+        "Contact Us",
+        "how to reach you",
+        "customer support"
+      ],
+      "responses": [
+        "You can contact us at ..... for any inquiries or support. We're here to help!"
+      ]
     }
 
     

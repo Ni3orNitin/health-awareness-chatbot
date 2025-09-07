@@ -83,6 +83,8 @@ def get_response(user_input):
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
+
+
 # --- Sidebar Quick Buttons ---
 st.sidebar.title("⚡ Quick Questions")
 if st.sidebar.button("🦟 Malaria Symptoms"):
@@ -134,6 +136,8 @@ if st.sidebar.button("ℹ️ About"):
     st.session_state.messages.append({"role": "user", "text": "About"})
     response = get_response("About")
     st.session_state.messages.append({"role": "assistant", "text": response})   
+
+
 
 # --- Chat input box ---
 user_input = st.chat_input("Ask me about health topics...")
