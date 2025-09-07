@@ -1,13 +1,10 @@
 import streamlit as st
-import sqlite3
-import spacy
+import json
 import random
-from rapidfuzz import fuzz
-import requests
-import os
-import shutil
+import spacy
 import subprocess
 import sys
+from rapidfuzz import fuzz
 
 # --- Spacy Model Setup ---
 # This function ensures the model is downloaded for deployment.
@@ -17,7 +14,6 @@ def load_spacy_model():
     try:
         nlp = spacy.load(model_name)
     except OSError:
-        # If the model is not found, install it directly from the URL
         st.info("SpaCy model not found. Downloading the model...")
         subprocess.run(
             [
@@ -35,82 +31,53 @@ def load_spacy_model():
 nlp = load_spacy_model()
 
 st.set_page_config(page_title="Odisha Health Awareness Chatbot", page_icon="🩺")
-st.title("🩺 Odisha Health Awareness Chatbot (SQLite Edition)")
+st.title("🩺 Odisha Health Awareness Chatbot")
 
-# --- Database connection helper ---
-def get_connection():
-    return sqlite3.connect("health.db")
-
-# --- Query DB for disease info ---
-def get_disease_info(disease_name: str):
-    conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT name, symptoms, precaution_1, precaution_2, precaution_3, precaution_4 FROM diseases WHERE LOWER(name)=?", (disease_name.lower(),))
-    row = cursor.fetchone()
-    conn.close()
-    return row
+# Load the data from your JSON file
+with open('data.json', 'r', encoding='utf-8') as file:
+    data = json.load(file)
 
 # --- Chatbot response logic ---
 def get_response(user_input):
     user_input_lower = user_input.lower().strip()
     
-    conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT name FROM diseases")
-    all_diseases = [row[0] for row in cursor.fetchall()]
-    conn.close()
-
-    best_match = None
+    # 1. Exact Pattern Match (High Confidence)
+    for intent in data['intents']:
+        if user_input_lower in [p.lower() for p in intent['patterns']]:
+            return random.choice(intent['responses'])
+    
+    # 2. Keyword-Based Matching (More Flexible with Fuzzy Matching)
+    keywords = ["malaria", "dengue", "covid"] # You can expand this list
+    
+    # Use fuzzy matching to find the best keyword match
+    found_keyword = None
     best_score = 0
+    fuzzy_match_threshold = 80 # A score of 80 or higher is considered a match
     
-    # Iterate through each word in the user's input to find a match
-    for word in user_input_lower.split():
-        for disease in all_diseases:
-            # Check for a high fuzzy ratio score for a single word
-            score = fuzz.ratio(word, disease.lower())
-            if score > best_score:
-                best_score = score
-                best_match = disease
-
-    if best_match and best_score > 70:
-        disease_data = get_disease_info(best_match)
-        if disease_data:
-            name, symptoms, precaution_1, precaution_2, precaution_3, precaution_4 = disease_data
+    for keyword in keywords:
+        score = fuzz.partial_ratio(user_input_lower, keyword)
+        if score > best_score and score >= fuzzy_match_threshold:
+            best_score = score
+            found_keyword = keyword
             
-            # Use Spacy to check for specific intents
-            doc = nlp(user_input_lower)
-            if any(token.text in ["symptom", "symptoms"] for token in doc):
-                return f"🦠 Symptoms of **{name}**: {symptoms}"
-            elif any(token.text in ["precaution", "prevent", "prevention"] for token in doc):
-                return (
-                    f"💊 Precautions for **{name}**:\n\n"
-                    f"- {precaution_1}\n"
-                    f"- {precaution_2}\n"
-                    f"- {precaution_3}\n"
-                    f"- {precaution_4}"
-                )
-            else:
-                return (
-                    f"ℹ️ Info about **{name}**:\n\n"
-                    f"- **Symptoms**: {symptoms}\n"
-                    f"- **Precautions**: {precaution_1}, {precaution_2}, {precaution_3}, {precaution_4}"
-                )
+    if found_keyword:
+        # Check if the user is asking for a specific type of information (symptoms/precautions)
+        if "symptoms" in user_input_lower:
+            for intent in data['intents']:
+                if intent['tag'].lower() == f"{found_keyword}_symptoms":
+                    return random.choice(intent['responses'])
+        elif "precautions" in user_input_lower or "prevent" in user_input_lower:
+            for intent in data['intents']:
+                if intent['tag'].lower() == f"{found_keyword}_precautions":
+                    return random.choice(intent['responses'])
+        else:
+            # If only the disease name is provided, return a general response
+            for intent in data['intents']:
+                if found_keyword in intent['tag'].lower():
+                    return random.choice(intent['responses'])
     
-    # Wikipedia fallback
-    try:
-        WIKI_API_URL = f"https://en.wikipedia.org/api/rest_v1/page/summary/{user_input_lower.replace(' ', '_')}"
-        response = requests.get(WIKI_API_URL, timeout=5)
-        if response.status_code == 200:
-            data = response.json()
-            extract = data.get("extract", "No detailed info found.")
-            if 'may refer to' in extract or 'The following is a list of' in extract:
-                return "❌ Sorry, I don’t have detailed info. Please consult a healthcare professional."
-            else:
-                return f"🌐 Wikipedia info about **{user_input.title()}**:\n\n{extract}"
-    except requests.exceptions.RequestException:
-        pass
-    
-    return f"❌ Sorry, I don’t have information about '{user_input}'. Please consult a healthcare professional."
+    # 3. Final Fallback if no match is found
+    return "❌ Sorry, I don't have information about that. Please ask about Malaria, Dengue, or other common health topics."
 
 # --- Session State ---
 if "messages" not in st.session_state:
@@ -123,14 +90,18 @@ if st.sidebar.button("🦟 Malaria Symptoms"):
     response = get_response("What are malaria symptoms?")
     st.session_state.messages.append({"role": "assistant", "text": response})
 
-if st.sidebar.button("🩸 Diabetes Symptoms"):
-    st.session_state.messages.append({"role": "user", "text": "What are diabetes symptoms?"})
-    response = get_response("What are diabetes symptoms?")
+if st.sidebar.button("🩸 Dengue Symptoms"):
+    st.session_state.messages.append({"role": "user", "text": "What are dengue symptoms?"})
+    response = get_response("What are dengue symptoms?")
+    st.session_state.messages.append({"role": "assistant", "text": response})
+
+if st.sidebar.button("🦠 Covid Precautions"):
+    st.session_state.messages.append({"role": "user", "text": "What are covid precautions?"})
+    response = get_response("What are covid precautions?")
     st.session_state.messages.append({"role": "assistant", "text": response})
 
 # --- Chat input box ---
-user_input = st.chat_input("Ask me about Malaria, Diabetes or other diseases...")
-
+user_input = st.chat_input("Ask me about health topics...")
 if user_input:
     st.session_state.messages.append({"role": "user", "text": user_input})
     response = get_response(user_input)

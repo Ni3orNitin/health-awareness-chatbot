@@ -23,12 +23,18 @@ try:
     symptoms_df = pd.read_csv("DiseaseAndSymptoms.csv")
     precaution_df = pd.read_csv("Disease precaution.csv")
     
-    # Rename columns for clarity and to enable merging
-    symptoms_df.columns = ['name', 'symptoms']
+    # Correctly handle the symptom columns
+    symptoms_cols = ['Symptom_' + str(i) for i in range(1, 18)]
+    symptoms_df['symptoms'] = symptoms_df[symptoms_cols].astype(str).agg(', '.join, axis=1)
+    symptoms_df = symptoms_df[['Disease', 'symptoms']]
+    symptoms_df.rename(columns={'Disease': 'name'}, inplace=True)
+    
+    # Correctly handle the precaution columns
     precaution_df.columns = ['name', 'precaution_1', 'precaution_2', 'precaution_3', 'precaution_4']
 
     # Merge the two DataFrames on the 'name' column
     combined_df = pd.merge(symptoms_df, precaution_df, on='name', how='left')
+    print(combined_df.head())
     
     # Insert the combined data into the database
     combined_df.to_sql('diseases', conn, if_exists='replace', index=False)
