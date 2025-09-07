@@ -100,6 +100,41 @@ if st.sidebar.button("🦠 Covid Precautions"):
     response = get_response("What are covid precautions?")
     st.session_state.messages.append({"role": "assistant", "text": response})
 
+if st.sidebar.button("🩺 General Health Tips")  :
+    st.session_state.messages.append({"role": "user", "text": "What are some general health tips?"})
+    response = get_response("What are some general health tips?")
+    st.session_state.messages.append({"role": "assistant", "text": response})
+
+if st.sidebar.button("📞 Emergency Numbers"):
+    st.session_state.messages.append({"role": "user", "text": "Emergency Numbers"})
+    response = get_response("Emergency Numbers")
+    st.session_state.messages.append({"role": "assistant", "text": response})
+
+if st.sidebar.button("💊 Nearby Hospitals"):
+    st.session_state.messages.append({"role": "user", "text": "Nearby Hospitals"})
+    response = get_response("Nearby Hospitals")
+    st.session_state.messages.append({"role": "assistant", "text": response})
+
+if st.sidebar.button("🌡️ Fever Management") :
+    st.session_state.messages.append({"role": "user", "text": "Fever Management"})
+    response = get_response("Fever Management")
+    st.session_state.messages.append({"role": "assistant", "text": response})
+
+if st.sidebar.button("🤒 Cold & Cough Remedies"):
+    st.session_state.messages.append({"role": "user", "text": "Cold and Cough Remedies"})
+    response = get_response("Cold and Cough Remedies")
+    st.session_state.messages.append({"role": "assistant", "text": response})
+
+if st.sidebar.button("❓ Help"):
+    st.session_state.messages.append({"role": "user", "text": "Help"})
+    response = get_response("Help")
+    st.session_state.messages.append({"role": "assistant", "text": response})
+
+if st.sidebar.button("ℹ️ About"):
+    st.session_state.messages.append({"role": "user", "text": "About"})
+    response = get_response("About")
+    st.session_state.messages.append({"role": "assistant", "text": response})   
+
 # --- Chat input box ---
 user_input = st.chat_input("Ask me about health topics...")
 if user_input:

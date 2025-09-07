@@ -67,6 +67,518 @@
       "responses": [
         "🦠 **COVID-19 Symptoms**: Fever 🤒, dry cough 😮‍💨, tiredness, loss of taste/smell 👃, and difficulty breathing. Please consult a doctor if symptoms persist."
       ]
+    },
+    {
+      "tag": "gastroenteritis_precautions",
+      "patterns": [
+        "How to prevent gastroenteritis?",
+        "Precautions for gastroenteritis",
+        "How can I stay safe from gastroenteritis?"
+      ],
+      "responses": [
+        "🍲 To prevent **Gastroenteritis**: Wash hands thoroughly, drink clean water, avoid contaminated food, and maintain good hygiene."
+      ]
+    },
+    {
+      "tag": "gastroenteritis_symptoms",
+      "patterns": [
+        "What are gastroenteritis symptoms?",
+        "Signs of gastroenteritis",
+        "Symptoms of gastroenteritis"
+      ],
+      "responses": [
+        "🍲 Common **Gastroenteritis** symptoms: Diarrhea 💩, vomiting 🤮, stomach cramps, nausea, and fever."
+      ]
+    },
+    {
+      "tag": "thanks",
+      "patterns": [
+        "Thanks",
+        "Thank you",
+        "That's helpful",
+        "Thanks for the info"
+      ],
+      "responses": [
+        "You're welcome! 😊 If you have more questions, feel free to ask."
+      ]
+    },
+    {
+      "tag": "goodbye",
+      "patterns": [
+        "Bye",
+        "See you later",
+        "Goodbye"
+      ],
+      "responses": [
+        "Goodbye! Take care and stay healthy! 👋"
+      ]
+    },
+    {
+      "tag": "greeting",
+      "patterns": [
+        "Hi",
+        "Hello",
+        "Hey",
+        "hyy",
+        "hi",
+        "hii",
+        "Good day"
+      ],
+      "responses": [
+        "Hello! How can I assist you with health information today? 😊"
+      ]
+    },
+    {
+      "tag": "noanswer",
+      "patterns": [],
+      "responses": [
+        "I'm sorry, I don't have an answer for that. Could you please ask something else?"
+      ]
+    },
+    {
+      "tag": "options",
+      "patterns": [
+        "What can you do?",
+        "How can you help me?",
+        "What services do you offer?"
+      ],
+      "responses": [
+        "I can provide information on symptoms and precautions for diseases like Malaria, Dengue, COVID-19, and Gastroenteritis. How can I assist you today? 🤖"
+      ]
+    },
+    {
+      "tag": "default_fallback",
+      "patterns": [],
+      "responses": [
+        "I'm sorry, I didn't understand that. Could you please rephrase?"
+      ]
+    },
+    {
+      "tag": "pneumonia_precautions",
+      "patterns": [
+        "How to prevent pneumonia?",
+        "Precautions for pneumonia",
+        "How can I stay safe from pneumonia?"
+      ],
+      "responses": [
+        "🫁 To prevent **Pneumonia**: Get vaccinated, practice good hygiene, avoid smoking 🚭, and maintain a healthy lifestyle."
+      ]
+    },
+    {
+      "tag": "pneumonia_symptoms",
+      "patterns": [
+        "What are pneumonia symptoms?",
+        "Signs of pneumonia",
+        "Symptoms of pneumonia"
+      ],
+      "responses": [
+        "🫁 Common **Pneumonia** symptoms: Cough with phlegm, fever, chills, shortness of breath, and chest pain."
+      ]
+    },
+    {
+      "tag": "typhoid_precautions",
+      "patterns": [
+        "How to prevent typhoid?",
+        "Precautions for typhoid",
+        "How can I stay safe from typhoid?"
+      ],
+      "responses": [
+        "🍽️ To prevent **Typhoid**: Drink safe water, eat well-cooked food, practice good hand hygiene, and get vaccinated."
+      ]
+    },
+    {
+      "tag": "typhoid_symptoms",
+      "patterns": [
+        "What are typhoid symptoms?",
+        "Signs of typhoid",
+        "Symptoms of typhoid"
+      ],
+      "responses": [
+        "🍽️ Common **Typhoid** symptoms: High fever, weakness, stomach pain, headache, and loss of appetite."
+      ]
+    },
+    {
+      "tag": "chikungunya_precautions",
+      "patterns": [
+        "How to prevent chikungunya?",
+        "Precautions for chikungunya",
+        "How can I stay safe from chikungunya?"
+      ],
+      "responses": [
+        "🦟 To prevent **Chikungunya**: Use mosquito repellents, wear long-sleeved clothes, eliminate mosquito breeding sites, and use mosquito nets."
+      ]
+    },
+    {
+      "tag": "chikungunya_symptoms",
+      "patterns": [
+        "What are chikungunya symptoms?",
+        "Signs of chikungunya",
+        "Symptoms of chikungunya"
+      ],
+      "responses": [
+        "🦟 Common **Chikungunya** symptoms: Sudden high fever, joint pain, muscle pain, headache, rash, and fatigue."
+      ]
+    },
+    {
+      "tag": "hepatitis_precautions",
+      "patterns": [
+        "How to prevent hepatitis?",
+        "Precautions for hepatitis",
+        "How can I stay safe from hepatitis?"
+      ],
+      "responses": [
+        "🦠 To prevent **Hepatitis**: Get vaccinated, practice good hygiene, avoid sharing needles, and consume safe food and water."
+      ]
+    },
+    {
+      "tag": "hepatitis_symptoms",
+      "patterns": [
+        "What are hepatitis symptoms?",
+        "Signs of hepatitis",
+        "Symptoms of hepatitis"
+      ],
+      "responses": [
+        "🦠 Common **Hepatitis** symptoms: Jaundice (yellowing of skin/eyes), fatigue, abdominal pain, loss of appetite, and nausea."
+      ]
+    },
+    {
+      "tag": "typhus_precautions",
+      "patterns": [
+        "How to prevent typhus?",
+        "Precautions for typhus",
+        "How can I stay safe from typhus?"
+      ],
+      "responses": [
+        "🦟 To prevent **Typhus**: Maintain good hygiene, avoid contact with lice and fleas, use insect repellents, and keep living areas clean."
+      ]
+    },
+    {
+      "tag": "typhus_symptoms",
+      "patterns": [
+        "What are typhus symptoms?",
+        "Signs of typhus",
+        "Symptoms of typhus"
+      ],
+      "responses": [
+        "🦟 Common **Typhus** symptoms: High fever, headache, rash, muscle pain, and chills."
+      ]
+    },
+    {
+      "tag": "jaundice_precautions",
+      "patterns": [
+        "How to prevent jaundice?",
+        "Precautions for jaundice",
+        "How can I stay safe from jaundice?"
+      ],
+      "responses": [
+        "🟡 To prevent **Jaundice**: Maintain good hygiene, avoid excessive alcohol consumption 🍺, eat a balanced diet, and get vaccinated against hepatitis."
+      ]
+    },
+    {
+      "tag": "jaundice_symptoms",
+      "patterns": [
+        "What are jaundice symptoms?",
+        "Signs of jaundice",
+        "Symptoms of jaundice"
+      ],
+      "responses": [
+        "🟡 Common **Jaundice** symptoms: Yellowing of skin/eyes, dark urine, pale stools, fatigue, and abdominal pain."
+      ]
+    },
+    {
+      "tag": "food_poisoning_precautions",
+      "patterns": [
+        "How to prevent food poisoning?",
+        "Precautions for food poisoning",
+        "How can I stay safe from food poisoning?"
+      ],
+      "responses": [
+        "🍽️ To prevent **Food Poisoning**: Wash hands before eating, cook food thoroughly, store food properly, and avoid cross-contamination."
+      ]
+    },
+    {
+      "tag": "food_poisoning_symptoms",
+      "patterns": [
+        "What are food poisoning symptoms?",
+        "Signs of food poisoning",
+        "Symptoms of food poisoning"
+      ],
+      "responses": [
+        "🍽️ Common **Food Poisoning** symptoms: Nausea 🤮, vomiting, diarrhea 💩, stomach cramps, and fever."
+      ]
+    },
+    {
+      "tag": "typhoid_precautions",
+      "patterns": [
+        "How to prevent typhoid?",
+        "Precautions for typhoid",
+        "How can I stay safe from typhoid?"
+      ],
+      "responses": [
+        "🍽️ To prevent **Typhoid**: Drink safe water, eat well-cooked food, practice good hand hygiene, and get vaccinated."
+      ]
+    },
+    {
+      "tag": "typhoid_symptoms",
+      "patterns": [
+        "What are typhoid symptoms?",
+        "Signs of typhoid",
+        "Symptoms of typhoid"
+      ],
+      "responses": [
+        "🍽️ Common **Typhoid** symptoms: High fever, weakness, stomach pain, headache, and loss of appetite."
+      ]
+    },
+    {
+      "tag": "chikungunya_precautions",
+      "patterns": [
+        "How to prevent chikungunya?",
+        "Precautions for chikungunya",
+        "How can I stay safe from chikungunya?"
+      ],
+      "responses": [
+        "🦟 To prevent **Chikungunya**: Use mosquito repellents, wear long-sleeved clothes, eliminate mosquito breeding sites, and use mosquito nets."
+      ]
+    },
+    {
+      "tag": "chikungunya_symptoms",
+      "patterns": [
+        "What are chikungunya symptoms?",
+        "Signs of chikungunya",
+        "Symptoms of chikungunya"
+      ],
+      "responses": [
+        "🦟 Common **Chikungunya** symptoms: Sudden high fever, joint pain, muscle pain, headache, rash, and fatigue."
+      ]
+    },
+    {
+      "tag": "hepatitis_precautions",
+      "patterns": [
+        "How to prevent hepatitis?",
+        "Precautions for hepatitis",
+        "How can I stay safe from hepatitis?"
+      ],
+      "responses": [
+        "🦠 To prevent **Hepatitis**: Get vaccinated, practice good hygiene, avoid sharing needles, and consume safe food and water."
+      ]
+    },
+    {
+      "tag": "hepatitis_symptoms",
+      "patterns": [
+        "What are hepatitis symptoms?",
+        "Signs of hepatitis",
+        "Symptoms of hepatitis"
+      ],
+      "responses": [
+        "🦠 Common **Hepatitis** symptoms: Jaundice (yellowing of skin/eyes), fatigue, abdominal pain, loss of appetite, and nausea."
+      ]
+    },
+    {
+      "tag": "typhus_precautions",
+      "patterns": [
+        "How to prevent typhus?",
+        "Precautions for typhus",
+        "How can I stay safe from typhus?"
+      ],
+      "responses": [
+        "🦟 To prevent **Typhus**: Maintain good hygiene, avoid contact with lice and fleas, use insect repellents, and keep living areas clean."
+      ]
+    },
+
+    {
+      "tag": "typhus_symptoms",
+      "patterns": [
+        "What are typhus symptoms?",
+        "Signs of typhus",
+        "Symptoms of typhus"
+      ],
+      "responses": [
+        "🦟 Common **Typhus** symptoms: High fever, headache, rash, muscle pain, and chills."
+      ]
+    },
+    {
+      "tag": "jaundice_precautions",
+      "patterns": [
+        "How to prevent jaundice?",
+        "Precautions for jaundice",
+        "How can I stay safe from jaundice?"
+      ],
+      "responses": [
+        "🟡 To prevent **Jaundice**: Maintain good hygiene, avoid excessive alcohol consumption 🍺, eat a balanced diet, and get vaccinated against hepatitis."
+      ]
+    },
+    {
+      "tag": "jaundice_symptoms",
+      "patterns": [
+        "What are jaundice symptoms?",
+        "Signs of jaundice",
+        "Symptoms of jaundice"
+      ],
+      "responses": [
+        "🟡 Common **Jaundice** symptoms: Yellowing of skin/eyes, dark urine, pale stools, fatigue, and abdominal pain."
+      ]
+    },
+    {
+      "tag": "food_poisoning_precautions",
+      "patterns": [
+        "How to prevent food poisoning?",
+        "Precautions for food poisoning",
+        "How can I stay safe from food poisoning?"
+      ],
+      "responses": [
+        "🍽️ To prevent **Food Poisoning**: Wash hands before eating, cook food thoroughly, store food properly, and avoid cross-contamination."
+      ]
+    },
+    {
+      "tag": "food_poisoning_symptoms",
+      "patterns": [
+        "What are food poisoning symptoms?",
+        "Signs of food poisoning",
+        "Symptoms of food poisoning"
+      ],
+      "responses": [
+        "🍽️ Common **Food Poisoning** symptoms: Nausea 🤮, vomiting, diarrhea 💩, stomach cramps, and fever."
+      ]
+    },
+    {
+      "tag": "default_fallback",
+      "patterns": [],
+      "responses": [
+        "I'm sorry, I didn't understand that. Could you please rephrase?"
+      ]
+    },
+    {
+      "tag": "options",
+      "patterns": [
+        "What can you do?",
+        "How can you help me?",
+        "What services do you offer?"
+      ],
+      "responses": [
+        "I can provide information on symptoms and precautions for diseases like Malaria, Dengue, COVID-19, and Gastroenteritis. How can I assist you today? 🤖"
+      ]
+    },
+    {
+      "tag": "noanswer",
+      "patterns": [],
+      "responses": [
+        "I'm sorry, I don't have an answer for that. Could you please ask something else?"
+      ]
+    },
+    {
+      "tag": "greeting",
+      "patterns": [
+        "Hi",
+        "Hello",
+        "Hey",
+        "Good day"
+      ],
+      "responses": [
+        "Hello! How can I assist you with health information today? 😊"
+      ]
+    },
+    {
+      "tag": "goodbye",
+      "patterns": [
+        "Bye",
+        "See you later",
+        "Goodbye"
+      ],
+      "responses": [
+        "Goodbye! Take care and stay healthy! 👋"
+      ]
+    },
+    {
+      "tag": "thanks",
+      "patterns": [
+        "Thanks",
+        "Thank you",
+        "That's helpful",
+        "Thanks for the info"
+      ],
+      "responses": [
+        "You're welcome! 😊 If you have more questions, feel free to ask."
+      ]
+    },
+    {
+      "tag": "general_health_tips",
+      "patterns": [
+        "What are some general health tips?",
+        "General Health Tips",
+        "health tips",
+        "tips for a healthy life"
+      ],
+      "responses": [
+        "To stay healthy: eat a balanced diet 🍎, exercise regularly 🏃, get enough sleep 😴, drink plenty of water 💧, and avoid smoking/alcohol."
+      ]
+    },
+    {
+      "tag": "emergency_numbers",
+      "patterns": [
+        "Emergency Numbers",
+        "what are the emergency numbers?",
+        "emergency contacts"
+      ],
+      "responses": [
+        "📞 **Emergency Numbers**: Ambulance/Medical Emergency: 102, Police: 100, Fire: 101."
+      ]
+    },
+    {
+      "tag": "nearby_hospitals",
+      "patterns": [
+        "Nearby Hospitals",
+        "hospitals near me",
+        "find a hospital"
+      ],
+      "responses": [
+        "🏥 This chatbot cannot provide real-time location-based hospital information. Please use Google Maps or a dedicated app on your phone to find nearby hospitals."
+      ]
+    },
+    {
+      "tag": "fever_management",
+      "patterns": [
+        "Fever Management",
+        "how to manage fever",
+        "fever remedies"
+      ],
+      "responses": [
+        "🌡️ **Fever Management**: Take rest, drink fluids, wear light clothing, and use a cool compress. Consult a doctor if the fever is high or persistent."
+      ]
+    },
+    {
+      "tag": "cold_cough_remedies",
+      "patterns": [
+        "Cold and Cough Remedies",
+        "remedies for cold and cough",
+        "cold cough"
+      ],
+      "responses": [
+        "🤧 **Cold & Cough Remedies**: Drink warm water 🍵, gargle with salt water, and try steam inhalation. Get plenty of rest. Consult a doctor if symptoms worsen."
+      ]
+    },
+    {
+      "tag": "help",
+      "patterns": [
+        "Help",
+        "what can you do",
+        "can you help me"
+      ],
+      "responses": [
+        "I am an Odisha Health Awareness Chatbot. I can provide information on symptoms and precautions for various diseases. You can ask me about diseases like Malaria, Dengue, or Covid."
+      ]
+    },
+    {
+      "tag": "about",
+      "patterns": [
+        "About",
+        "who are you",
+        "what is this chatbot"
+      ],
+      "responses": [
+        "I am a health awareness chatbot developed to provide information on common diseases and health tips. My data is sourced from health-related datasets and I can help you with symptoms and precautions."
+      ]
     }
+
+    
   ]
 }
