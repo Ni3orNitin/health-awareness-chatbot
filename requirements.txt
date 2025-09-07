@@ -1,6 +1,8 @@
 streamlit
 spacy==3.8.7
 
+pandas
+
 rapidfuzz
 requests
 mysql-connector-python

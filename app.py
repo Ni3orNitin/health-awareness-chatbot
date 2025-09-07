@@ -34,7 +34,7 @@ def load_spacy_model():
 nlp = load_spacy_model()
 
 st.set_page_config(page_title="Odisha Health Awareness Chatbot", page_icon="🩺")
-st.title("🩺 Odisha Health Awareness Chatbot (SQLite Edition)")
+st.title("🩺 Odisha Health Awareness Chatbot")
 
 # --- Database connection helper ---
 def get_connection():
