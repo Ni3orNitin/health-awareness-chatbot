@@ -3,12 +3,3 @@ pandas
 requests
 rapidfuzz
 spacy
-en-core-web-sm @
-python-3.11
-spacy==3.8.1
-en-core-web-sm==3.8.1
-
-https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1-py3-none-any.whl
-
-
-
