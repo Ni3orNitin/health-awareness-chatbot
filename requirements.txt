@@ -14,3 +14,7 @@ requests
 rapidfuzz
 spacy==3.8.x
 en-core-web-sm==3.8.x
+
+python-3.11
+spacy==3.8.1
+en-core-web-sm==3.8.1

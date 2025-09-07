@@ -492,6 +492,9 @@
       "tag": "thanks",
       "patterns": [
         "Thanks",
+        "thnk",
+        "thnks",
+        "Thank",
         "Thank you",
         "That's helpful",
         "Thanks for the info"
