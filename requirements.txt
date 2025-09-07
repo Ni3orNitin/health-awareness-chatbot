@@ -8,3 +8,9 @@ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1
 
 spacy
 en-core-web-sm @
+streamlit
+pandas
+requests
+rapidfuzz
+spacy==3.8.x
+en-core-web-sm==3.8.x

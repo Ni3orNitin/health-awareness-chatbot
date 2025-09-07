@@ -6,6 +6,20 @@ import subprocess
 import sys
 from rapidfuzz import fuzz
 
+
+
+import streamlit as st
+import subprocess
+import sys
+
+# Try to install blis if it's not present
+try:
+    import blis
+except ImportError:
+    st.info("Installing blis...")
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "blis==0.7.11"]) # Or whatever version you need
+    st.experimental_rerun()
+
 # --- Spacy Model Setup ---
 # This function ensures the model is downloaded for deployment.
 @st.cache_resource
