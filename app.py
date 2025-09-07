@@ -5,11 +5,12 @@ import random
 from rapidfuzz import fuzz
 import requests
 import os
+import shutil
 import subprocess
 import sys
 
 # --- Spacy Model Setup ---
-# A more robust approach for Streamlit Cloud deployment
+# This function ensures the model is downloaded for deployment.
 @st.cache_resource
 def load_spacy_model():
     model_name = "en_core_web_sm"
@@ -34,7 +35,7 @@ def load_spacy_model():
 nlp = load_spacy_model()
 
 st.set_page_config(page_title="Odisha Health Awareness Chatbot", page_icon="🩺")
-st.title("🩺 Odisha Health Awareness Chatbot")
+st.title("🩺 Odisha Health Awareness Chatbot (SQLite Edition)")
 
 # --- Database connection helper ---
 def get_connection():
@@ -44,7 +45,7 @@ def get_connection():
 def get_disease_info(disease_name: str):
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT name, symptoms, treatment, side_effects FROM diseases WHERE LOWER(name)=?", (disease_name.lower(),))
+    cursor.execute("SELECT name, symptoms, precaution_1, precaution_2, precaution_3, precaution_4 FROM diseases WHERE LOWER(name)=?", (disease_name.lower(),))
     row = cursor.fetchone()
     conn.close()
     return row
@@ -74,24 +75,27 @@ def get_response(user_input):
     if best_match and best_score > 70:
         disease_data = get_disease_info(best_match)
         if disease_data:
-            name, symptoms, treatment, side_effects = disease_data
+            name, symptoms, precaution_1, precaution_2, precaution_3, precaution_4 = disease_data
             
             # Use Spacy to check for specific intents
             doc = nlp(user_input_lower)
             if any(token.text in ["symptom", "symptoms"] for token in doc):
                 return f"🦠 Symptoms of **{name}**: {symptoms}"
-            elif any(token.text in ["treatment", "treat"] for token in doc):
-                return f"💊 Treatment for **{name}**: {treatment}"
-            elif any(token.text in ["side effect", "side effects"] for token in doc):
-                return f"⚠️ Side effects of treatment for **{name}**: {side_effects}"
+            elif any(token.text in ["precaution", "prevent", "prevention"] for token in doc):
+                return (
+                    f"💊 Precautions for **{name}**:\n\n"
+                    f"- {precaution_1}\n"
+                    f"- {precaution_2}\n"
+                    f"- {precaution_3}\n"
+                    f"- {precaution_4}"
+                )
             else:
                 return (
                     f"ℹ️ Info about **{name}**:\n\n"
                     f"- **Symptoms**: {symptoms}\n"
-                    f"- **Treatment**: {treatment}\n"
-                    f"- **Side Effects**: {side_effects}"
+                    f"- **Precautions**: {precaution_1}, {precaution_2}, {precaution_3}, {precaution_4}"
                 )
-
+    
     # Wikipedia fallback
     try:
         WIKI_API_URL = f"https://en.wikipedia.org/api/rest_v1/page/summary/{user_input_lower.replace(' ', '_')}"
@@ -107,6 +111,7 @@ def get_response(user_input):
         pass
     
     return f"❌ Sorry, I don’t have information about '{user_input}'. Please consult a healthcare professional."
+
 # --- Session State ---
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -116,11 +121,6 @@ st.sidebar.title("⚡ Quick Questions")
 if st.sidebar.button("🦟 Malaria Symptoms"):
     st.session_state.messages.append({"role": "user", "text": "What are malaria symptoms?"})
     response = get_response("What are malaria symptoms?")
-    st.session_state.messages.append({"role": "assistant", "text": response})
-
-if st.sidebar.button("🦟 Malaria Treatment"):
-    st.session_state.messages.append({"role": "user", "text": "How to treat malaria?"})
-    response = get_response("How to treat malaria?")
     st.session_state.messages.append({"role": "assistant", "text": response})
 
 if st.sidebar.button("🩸 Diabetes Symptoms"):
